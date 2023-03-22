@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Card from "./Card";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+const TAB = [1,2,3,4,5,6,7,8,9,10];
 
 function Robos() {
   const [data, setDate] = useState(null);
@@ -33,7 +36,7 @@ function Robos() {
   );
 
   return (
-    <>
+    <div className="robots-container">
       <div className="inputRecherche">
         <input
           type="text"
@@ -42,12 +45,18 @@ function Robos() {
           value={champ}
         />
       </div>
-      <div className="robots-container">
-        {filteredData.map(({ name, id, email }) => (
-          <Card name={name} key={id} adresse={email} />
-        ))}
+      <div className="card-container">
+        {data
+          ? filteredData &&
+            filteredData.map(({ name, id, email }) => (
+              <Card name={name} key={id} adresse={email} />
+            ))
+          : 
+            TAB.map((element) => (
+              <Card  key={element}/>
+            ))}
       </div>
-    </>
+    </div>
   );
 }
 
