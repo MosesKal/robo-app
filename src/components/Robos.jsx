@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import Card from "./Card";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-const TAB = [1,2,3,4,5,6,7,8,9,10];
+import RobotModal from "./RobotModal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Robos() {
-  const [data, setDate] = useState(null);
+  const [data, setData] = useState(null);
   const [champ, setChamp] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedRobot, setSelectedRobot] = useState(null);
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
       .then((data) => {
-        setDate(data);
+        setData(data);
         setFilteredData(data);
       })
       .catch((error) => console.log(error));
@@ -35,6 +35,10 @@ function Robos() {
     [data]
   );
 
+  const handleCardClick = useCallback((robo) => setSelectedRobot(robo), []);
+
+  const handleCloseModal = useCallback(() => setSelectedRobot(null), []);
+
   return (
     <div className="robots-container">
       <div className="inputRecherche">
@@ -46,18 +50,26 @@ function Robos() {
         />
       </div>
       <div className="card-container">
-        {data
-          ? filteredData &&
-            filteredData.map(({ name, id, email }) => (
-              <Card name={name} key={id} adresse={email} />
-            ))
-          : 
-            TAB.map((element) => (
-              <Card  key={element}/>
-            ))}
+        {data &&
+          filteredData &&
+          filteredData.map((robo) => (
+            <div
+              onClick={() => handleCardClick(robo)}
+              key={robo.id}
+              className="card-robo"
+            >
+              <Card name={robo.name} adresse={robo.email} robo={robo} />
+            </div>
+          ))}
       </div>
+      {selectedRobot && (
+        <RobotModal
+          show={true}
+          handleClose={handleCloseModal}
+          robo={selectedRobot}
+        />
+      )}
     </div>
   );
 }
-
 export default Robos;
